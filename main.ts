@@ -24,8 +24,20 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     Hero.x += -5
+    if (flip == 0) {
+        Hero.image.flipX()
+        flip += 1
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    Hero.x += 5
+    if (flip == 1) {
+        Hero.image.flipX()
+        flip += -1
+    }
 })
 let Floor: Sprite = null
+let flip = 0
 let Hero: Sprite = null
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -167,7 +179,8 @@ Hero = sprites.create(img`
     . . . . . . f f f f f f . . . . 
     . . . . . . . f f f . . . . . . 
     `, SpriteKind.Player)
-Hero.setPosition(0, 61)
+Hero.setFlag(SpriteFlag.StayInScreen, true)
+Hero.setPosition(10, 61)
 let startpad = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
@@ -186,4 +199,5 @@ let startpad = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     `, SpriteKind.Player)
-startpad.setPosition(5, 73)
+startpad.setPosition(8, 73)
+flip = 0
