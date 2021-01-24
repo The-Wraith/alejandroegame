@@ -2,6 +2,19 @@ namespace SpriteKind {
     export const Platform = SpriteKind.create()
     export const obstacle = SpriteKind.create()
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (placed == 1) {
+        Hero.y += -5
+        Hero.setVelocity(Hero.vx, -200)
+        placed = 0
+    }
+    if (controller.right.isPressed() == true) {
+        Hero.setVelocity(150, Hero.vy)
+    }
+    if (controller.left.isPressed() == true) {
+        Hero.setVelocity(-150, Hero.vy)
+    }
+})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     Floor = sprites.create(img`
         . . . . . . . . . . . . . . . . 
@@ -25,23 +38,35 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Platform, function (sprite, otherSprite) {
     Hero.setVelocity(0, 0)
+    placed = 1
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    Hero.x += -5
-    if (flip == 0) {
-        Hero.image.flipX()
-        flip += 1
+    if (controller.up.isPressed() == false) {
+        Hero.x += -5
+        if (flip == 0) {
+            Hero.image.flipX()
+            flip += 1
+        }
     }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.obstacle, function (sprite, otherSprite) {
+    Hero.destroy()
+    game.over(false)
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    Hero.x += 5
-    if (flip == 1) {
-        Hero.image.flipX()
-        flip += -1
+    if (controller.up.isPressed() == false) {
+        Hero.x += 5
+        if (flip == 1) {
+            Hero.image.flipX()
+            flip += -1
+        }
     }
 })
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    Hero.setVelocity(0, 50)
+})
 let Floor: Sprite = null
-let mySprite: Sprite = null
+let placed = 0
 let flip = 0
 let Hero: Sprite = null
 scene.setBackgroundImage(img`
@@ -225,7 +250,10 @@ let spike1 = sprites.create(img`
     . c b b 3 3 b 3 3 b 3 3 b b c . 
     . . f f f f f f f f f f f f . . 
     `, SpriteKind.obstacle)
-mySprite.setPosition(0, 0)
+placed = 1
+forever(function () {
+    spike1.setPosition(Hero.x, 113)
+})
 game.onUpdateInterval(100, function () {
     Hero.setVelocity(0, 50)
 })
