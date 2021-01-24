@@ -1,5 +1,6 @@
 namespace SpriteKind {
     export const Platform = SpriteKind.create()
+    export const obstacle = SpriteKind.create()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     Floor = sprites.create(img`
@@ -22,6 +23,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         `, SpriteKind.Platform)
     Floor.setPosition(Hero.x, Hero.y + 12)
 })
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Platform, function (sprite, otherSprite) {
+    Hero.setVelocity(0, 0)
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     Hero.x += -5
     if (flip == 0) {
@@ -37,6 +41,7 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 let Floor: Sprite = null
+let mySprite: Sprite = null
 let flip = 0
 let Hero: Sprite = null
 scene.setBackgroundImage(img`
@@ -198,6 +203,29 @@ let startpad = sprites.create(img`
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . 
-    `, SpriteKind.Player)
+    `, SpriteKind.Platform)
 startpad.setPosition(8, 73)
 flip = 0
+Hero.setVelocity(0, 50)
+let spike1 = sprites.create(img`
+    . . . . . f c c c c f . . . . . 
+    . . c c f b b 3 3 b b f c c . . 
+    . c b 3 3 b b c c b b 3 3 b c . 
+    . f 3 c c c b c c b c c c 3 f . 
+    f c b b c c b c c b c c b b c f 
+    c 3 c c b c c c c c c b c c 3 c 
+    c 3 c c c c c c c c c c c c 3 c 
+    . f b b c c c c c c c c b b f . 
+    . . f b b c c c c c c b b f . . 
+    . . c c c f f f f f f c c c . . 
+    . c 3 f f f f f f f f f f 3 c . 
+    c 3 f f f f f f f f f f f f 3 c 
+    f 3 c c f f f f f f f f c c 3 f 
+    f b 3 c b b f b b f b b c 3 b f 
+    . c b b 3 3 b 3 3 b 3 3 b b c . 
+    . . f f f f f f f f f f f f . . 
+    `, SpriteKind.obstacle)
+mySprite.setPosition(0, 0)
+game.onUpdateInterval(100, function () {
+    Hero.setVelocity(0, 50)
+})
