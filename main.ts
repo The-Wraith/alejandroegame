@@ -16,25 +16,28 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    Floor = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . e e e e e e e e e e e e . . 
-        . . e e e e e e e e e e e e . . 
-        . . e e e e e e e e e e e e . . 
-        . . . e e e e e e e e e e . . . 
-        . . . . e e e e e e e e . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Platform)
-    Floor.setPosition(Hero.x, Hero.y + 12)
+    if (cooldown == 0) {
+        Floor = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . e e e e e e e e e e e e . . 
+            . . e e e e e e e e e e e e . . 
+            . . e e e e e e e e e e e e . . 
+            . . . e e e e e e e e e e . . . 
+            . . . . e e e e e e e e . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Platform)
+        Floor.setPosition(Hero.x, Hero.y + 12)
+        cooldown = 4
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Platform, function (sprite, otherSprite) {
     Hero.setVelocity(0, 0)
@@ -66,6 +69,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     Hero.setVelocity(0, 50)
 })
 let Floor: Sprite = null
+let cooldown = 0
 let placed = 0
 let flip = 0
 let Hero: Sprite = null
@@ -251,8 +255,40 @@ let spike1 = sprites.create(img`
     . . f f f f f f f f f f f f . . 
     `, SpriteKind.obstacle)
 placed = 1
+let end_platform = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 
+    1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 
+    f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 
+    1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 
+    . 1 f 1 f 1 f 1 f 1 f 1 f 1 f . 
+    . . 1 f 1 f 1 f 1 f 1 f 1 f . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Platform)
+end_platform.setPosition(144, 75)
+cooldown = 0
+let statusbar: Sprite = statusbars.create(20, 4, StatusBarKind.Energy)
 forever(function () {
+    if (Hero.overlapsWith(end_platform)) {
+        game.over(true)
+    }
+})
+forever(function () {
+    statusbar.setPosition(Hero.x, Hero.y - 15)
     spike1.setPosition(Hero.x, 113)
+})
+game.onUpdateInterval(500, function () {
+    if (cooldown > 0) {
+        cooldown += -1
+    }
 })
 game.onUpdateInterval(100, function () {
     Hero.setVelocity(0, 50)
