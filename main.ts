@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const Platform = SpriteKind.create()
     export const obstacle = SpriteKind.create()
+    export const NPC = SpriteKind.create()
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if (placed == 1) {
@@ -36,6 +37,7 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Platform)
         Floor.setPosition(Hero.x, Hero.y + 12)
+        info.startCountdown(2)
         cooldown = 4
     }
 })
@@ -55,6 +57,9 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
 sprites.onOverlap(SpriteKind.Player, SpriteKind.obstacle, function (sprite, otherSprite) {
     Hero.destroy()
     game.over(false)
+})
+info.onCountdownEnd(function () {
+    cooldown = 0
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if (controller.up.isPressed() == false) {
@@ -236,7 +241,7 @@ let startpad = sprites.create(img`
 startpad.setPosition(8, 73)
 flip = 0
 Hero.setVelocity(0, 50)
-let spike1 = sprites.create(img`
+let oyster_boi = sprites.create(img`
     . . . . . f c c c c f . . . . . 
     . . c c f b b 3 3 b b f c c . . 
     . c b 3 3 b b c c b b 3 3 b c . 
@@ -254,6 +259,7 @@ let spike1 = sprites.create(img`
     . c b b 3 3 b 3 3 b 3 3 b b c . 
     . . f f f f f f f f f f f f . . 
     `, SpriteKind.obstacle)
+oyster_boi.setPosition(Hero.x, 112)
 placed = 1
 let end_platform = sprites.create(img`
     . . . . . . . . . . . . . . . . 
@@ -275,20 +281,51 @@ let end_platform = sprites.create(img`
     `, SpriteKind.Platform)
 end_platform.setPosition(144, 75)
 cooldown = 0
-let statusbar: Sprite = statusbars.create(20, 4, StatusBarKind.Energy)
+let Sensei = sprites.create(img`
+    ................
+    .......111......
+    ......1333......
+    ......1311......
+    ......3111......
+    ......3b131.....
+    ......b3b311....
+    ......313131....
+    .....b3131b1....
+    .....b333113....
+    .....bc31311....
+    ....3bc31131....
+    ....3bc1111.....
+    ....3c31111.....
+    ...33c111113....
+    ...1b3111111....
+    .....3111111....
+    .....3113111....
+    .....31131113...
+    .bbbb31131111bb.
+    b11133133111131b
+    3113131331131313
+    3113111331133313
+    3111311331133113
+    3111133333333113
+    3111113333311113
+    b11111111111111b
+    3bb1111111111bb3
+    1333333333333331
+    13333bbbbbb33331
+    b33333333333333b
+    cbbbbbbbbbbbbbbc
+    `, SpriteKind.NPC)
+Sensei.setPosition(66, 55)
+Sensei.say("welcome")
+pause(2000)
+Sensei.say("you must be weary")
 forever(function () {
     if (Hero.overlapsWith(end_platform)) {
         game.over(true)
     }
 })
 forever(function () {
-    statusbar.setPosition(Hero.x, Hero.y - 15)
-    spike1.setPosition(Hero.x, 113)
-})
-game.onUpdateInterval(500, function () {
-    if (cooldown > 0) {
-        cooldown += -1
-    }
+    oyster_boi.setPosition(Hero.x, 112)
 })
 game.onUpdateInterval(100, function () {
     Hero.setVelocity(0, 50)
